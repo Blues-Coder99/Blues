@@ -17,7 +17,7 @@
     </platform>
     <preference name="Orientation" value="portrait" />
     <preference name="Fullscreen" value="false" />
-    <preference name="BackgroundColor" value="0xff000000" />
+    <preference name="BackgroundColor" value="#FF000000" />
     <preference name="android-minSdkVersion" value="22" />
     <preference name="android-targetSdkVersion" value="34" />
 </widget>
