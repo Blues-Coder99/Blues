@@ -32,7 +32,10 @@ jobs:
       - name: Add Android platform
         run: cordova platform add android
 
-      - name: Build debug APK
+      - name: Clean stale platform files
+        run: rm -rf platforms plugins
+
+      - name: Add Android platform
         run: cordova platform add android@15.1.0
 
       - name: Upload APK artifact
