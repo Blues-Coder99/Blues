@@ -33,7 +33,7 @@ jobs:
         run: cordova platform add android
 
       - name: Build debug APK
-        run: cordova build android
+        run: cordova platform add android@15.1.0
 
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
