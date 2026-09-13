@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Blues</title>
+<style>
+:root{--bg:#0a0a0a;--card:#161616;--card2:#1f1f1f;--text:#e5e5e5;--muted:#8a8a8a;--accent:#3b82f6;--green:#22c55e;--red:#ef4444;--yellow:#eab308;--border:#2a2a2a}
+*{box-sizing:border-box;margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif}
+body{background:var(--bg);color:var(--text);min-height:100vh;padding-bottom:80px}
+header{background:#000;padding:22px 20px;text-align:center;border-bottom:1px solid var(--border)}
+header h1{font-size:1.3rem;font-weight:700;letter-spacing:1px;color:#fff}
+header p{font-size:.7rem;opacity:.6;margin-top:4px;letter-spacing:.5px}
+.container{max-width:900px;margin:0 auto;padding:16px}
+.card{background:var(--card);border-radius:12px;padding:16px;margin-bottom:14px;border:1px solid var(--border)}
+.card h2{font-size:1rem;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+button{background:var(--accent);color:#fff;border:none;padding:10px 16px;border-radius:8px;cursor:pointer;font-size:.9rem;font-weight:500;transition:.2s}
+button:hover{background:#2563eb}
+button.secondary{background:var(--card2);border:1px solid var(--border)}
+button.secondary:hover{background:#334155}
+button.danger{background:var(--red)}
+button.danger:hover{background:#dc2626}
+button.small{padding:6px 10px;font-size:.8rem}
+input,select{background:var(--card2);border:1px solid var(--border);color:var(--text);padding:10px;border-radius:8px;width:100%;font-size:.9rem;margin-bottom:10px}
+input:focus,select:focus{outline:none;border-color:var(--accent)}
+label{display:block;font-size:.8rem;color:var(--muted);margin-bottom:4px}
+.row{display:flex;gap:10px;flex-wrap:wrap}
+.row>*{flex:1;min-width:120px}
+.tabs{display:flex;background:var(--card);border-radius:12px;padding:4px;margin-bottom:14px;border:1px solid var(--border);overflow-x:auto}
+.tab{flex:1;padding:10px;text-align:center;cursor:pointer;border-radius:8px;font-size:.85rem;color:var(--muted);transition:.2s;white-space:nowrap;min-width:100px}
+.tab.active{background:var(--accent);color:#fff;font-weight:600}
+.portfolio-card{display:flex;align-items:center;gap:12px;padding:14px;background:var(--card2);border-radius:10px;margin-bottom:10px;cursor:pointer;transition:.2s;border:2px solid transparent}
+.portfolio-card:hover{border-color:var(--accent)}
+.portfolio-icon{width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.5rem;flex-shrink:0}
+.portfolio-info{flex:1}
+.portfolio-info h3{font-size:.95rem;margin-bottom:2px}
+.portfolio-info small{color:var(--muted);font-size:.75rem}
+.icon-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(50px,1fr));gap:8px;margin-top:8px}
+.icon-option{width:100%;aspect-ratio:1;display:flex;align-items:center;justify-content:center;font-size:1.4rem;background:var(--card2);border:2px solid var(--border);border-radius:10px;cursor:pointer;transition:.2s}
+.icon-option:hover{border-color:var(--accent)}
+.icon-option.selected{border-color:var(--accent);background:#1e3a5f}
+.metrics-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.metric{background:var(--card2);padding:12px;border-radius:10px;border-left:3px solid var(--accent)}
+.metric.green{border-color:var(--green)}
+.metric.red{border-color:var(--red)}
+.metric.yellow{border-color:var(--yellow)}
+.metric small{color:var(--muted);font-size:.7rem;text-transform:uppercase;letter-spacing:.5px}
+.metric .value{font-size:1.2rem;font-weight:700;margin-top:4px}
+.metric .value.green{color:var(--green)}
+.metric .value.red{color:var(--red)}
+.metric .value.yellow{color:var(--yellow)}
+table{width:100%;border-collapse:collapse;font-size:.85rem}
+th{text-align:left;padding:8px;color:var(--muted);font-size:.75rem;text-transform:uppercase;border-bottom:1px solid var(--border)}
+td{padding:10px 8px;border-bottom:1px solid var(--border)}
+tr:last-child td{border-bottom:none}
+.num{text-align:right;font-variant-numeric:tabular-nums}
+.calendar-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.calendar-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+.cal-day-name{text-align:center;font-size:.7rem;color:var(--muted);padding:4px 0;font-weight:600}
+.cal-day{aspect-ratio:1;background:var(--card2);border-radius:6px;padding:4px;font-size:.75rem;display:flex;flex-direction:column;justify-content:space-between;cursor:pointer;border:1px solid transparent;transition:.15s;position:relative}
+.cal-day:hover{border-color:var(--accent)}
+.cal-day.other-month{opacity:.3}
+.cal-day.today{border-color:var(--yellow);font-weight:700}
+.cal-day.has-income{background:rgba(34,197,94,.15);border-color:var(--green)}
+.cal-day.has-expense{background:rgba(239,68,68,.15);border-color:var(--red)}
+.cal-day.has-both{background:linear-gradient(135deg,rgba(34,197,94,.2) 50%,rgba(239,68,68,.2) 50%);border-color:var(--yellow)}
+.cal-day .amounts{font-size:.6rem;line-height:1.1}
+.cal-day .amounts .inc{color:var(--green);font-weight:600}
+.cal-day .amounts .exp{color:var(--red);font-weight:600}
+.cal-day .day-num{font-weight:600}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);display:none;align-items:center;justify-content:center;padding:16px;z-index:100}
+.modal-overlay.show{display:flex}
+.modal{background:var(--card);border-radius:14px;padding:20px;max-width:480px;width:100%;max-height:90vh;overflow-y:auto;border:1px solid var(--border)}
+.modal h2{margin-bottom:14px;font-size:1.1rem}
+.modal-actions{display:flex;gap:10px;margin-top:14px}
+.modal-actions button{flex:1}
+.empty{text-align:center;padding:30px 16px;color:var(--muted)}
+.empty .big{font-size:3rem;margin-bottom:10px;opacity:.5}
+.badge{display:inline-block;padding:2px 8px;border-radius:20px;font-size:.7rem;font-weight:600;background:var(--accent);color:#fff}
+.badge.green{background:var(--green)}
+.badge.red{background:var(--red)}
+.badge.gray{background:var(--card2);color:var(--muted)}
+.hidden{display:none!important}
+.text-green{color:var(--green)}
+.text-red{color:var(--red)}
+.text-yellow{color:var(--yellow)}
+.text-muted{color:var(--muted)}
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;background:var(--card);border-top:1px solid var(--border);display:flex;justify-content:space-around;padding:8px 0;z-index:50}
+.nav-btn{display:flex;flex-direction:column;align-items:center;gap:2px;background:none;color:var(--muted);font-size:.7rem;padding:6px 12px;border-radius:8px}
+.nav-btn.active{color:var(--accent)}
+.nav-btn .nav-icon{font-size:1.2rem}
+.nav-btn:hover{background:var(--card2)}
+@media(max-width:480px){.metrics-grid{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+<header>
+  <h1>Blues</h1>
+  <p>Notas personales</p>
+</header>
+<div class="container">
+  <div id="view-portfolios" class="view">
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+        <h2>💼 Mis Portafolios</h2>
+        <button class="small" onclick="openPortfolioModal()">+ Nuevo</button>
+      </div>
+      <div id="portfolios-list"></div>
+    </div>
+  </div>
+  <div id="view-dashboard" class="view hidden">
+    <div class="card">
+      <h2>📊 Dashboard General</h2>
+      <div class="metrics-grid" id="dashboard-metrics" style="margin-top:12px"></div>
+    </div>
+    <div class="card">
+      <h2>🥧 Inversiones por Categoría</h2>
+      <div id="dashboard-investments-pie"></div>
+    </div>
+    <div class="card">
+      <h2>🥧 Gastos por Categoría</h2>
+      <div id="dashboard-expenses-pie"></div>
+    </div>
+    <div class="card">
+      <h2>🗓️ Resumen Mensual (todas las secciones)</h2>
+      <div id="dashboard-monthly"></div>
+    </div>
+  </div>
+  <div id="view-detail" class="view hidden">
+    <div class="card">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px">
+        <div id="detail-icon" class="portfolio-icon"></div>
+        <div style="flex:1">
+          <h2 id="detail-name" style="margin:0"></h2>
+          <small id="detail-desc" class="text-muted"></small>
+        </div>
+        <button class="secondary small" onclick="showView('portfolios')">← Atrás</button>
+      </div>
+    </div>
+    <div class="tabs">
+      <div class="tab active" data-tab="summary" onclick="switchTab('summary')">📈 Resumen</div>
+      <div class="tab" data-tab="investments" onclick="switchTab('investments')">💰 Inversiones</div>
+      <div class="tab" data-tab="purchases" onclick="switchTab('purchases')">🛒 Compras</div>
+      <div class="tab" data-tab="calendar" onclick="switchTab('calendar')">📅 Calendario</div>
+    </div>
+    <div id="tab-summary" class="tab-view">
+      <div class="card"><h2>📈 Resumen del Portafolio</h2><div class="metrics-grid" id="summary-metrics"></div></div>
+      <div class="card"><h2>🏆 Distribución por Categoría</h2><div id="category-breakdown"></div></div>
+    </div>
+    <div id="tab-investments" class="tab-view hidden">
+      <div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+          <h2>💰 Inversiones</h2>
+          <button class="small" onclick="openInvestmentModal()">+ Añadir</button>
+        </div>
+        <div id="investments-list"></div>
+      </div>
+    </div>
+    <div id="tab-purchases" class="tab-view hidden">
+      <div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+          <h2>🛒 Registro de Compras</h2>
+          <button class="small" onclick="openPurchaseModal()">+ Registrar</button>
+        </div>
+        <div id="purchases-list"></div>
+      </div>
+      <div class="card"><h2>📊 Sumatoria Mensual</h2><div id="monthly-summary"></div></div>
+    </div>
+    <div id="tab-calendar" class="tab-view hidden">
+      <div class="card">
+        <div class="calendar-header">
+          <button class="secondary small" onclick="changeMonth(-1)">◀</button>
+          <h3 id="calendar-title"></h3>
+          <button class="secondary small" onclick="changeMonth(1)">▶</button>
+        </div>
+        <div class="calendar-grid" id="calendar-grid"></div>
+        <div style="margin-top:12px;display:flex;gap:16px;font-size:.75rem;color:var(--muted);flex-wrap:wrap">
+          <div><span style="display:inline-block;width:12px;height:12px;background:rgba(34,197,94,.4);border-radius:3px;margin-right:4px;vertical-align:middle"></span>Ingresos</div>
+          <div><span style="display:inline-block;width:12px;height:12px;background:rgba(239,68,68,.4);border-radius:3px;margin-right:4px;vertical-align:middle"></span>Gastos</div>
+          <div><span style="display:inline-block;width:12px;height:12px;border:2px solid var(--yellow);border-radius:3px;margin-right:4px;vertical-align:middle"></span>Hoy</div>
+        </div>
+      </div>
+      <div class="card">
+        <h2>📋 Detalle del día <span id="selected-day-label" class="text-muted"></span></h2>
+        <div id="day-detail"></div>
+      </div>
+    </div>
+  </div>
+</div>
+<nav class="bottom-nav">
+  <button class="nav-btn active" id="nav-portfolios" onclick="showView('portfolios')">
+    <span class="nav-icon">💼</span><span>Portafolios</span>
+  </button>
+  <button class="nav-btn" id="nav-dashboard" onclick="showView('dashboard')">
+    <span class="nav-icon">📊</span><span>Dashboard</span>
+  </button>
+  <button class="nav-btn" onclick="showGlobalCalendar()">
+    <span class="nav-icon">📅</span><span>Calendario</span>
+  </button>
+</nav>
+<div class="modal-overlay" id="modal-portfolio">
+  <div class="modal">
+    <h2 id="portfolio-modal-title">Nuevo Portafolio</h2>
+    <input type="hidden" id="portfolio-id">
+    <label>Nombre</label>
+    <input type="text" id="portfolio-name" placeholder="Ej: Portafolio Cripto">
+    <label>Descripción</label>
+    <input type="text" id="portfolio-desc" placeholder="Ej: Inversiones de largo plazo">
+    <label>Icono</label>
+    <div class="icon-grid" id="icon-grid"></div>
+    <div class="modal-actions">
+      <button class="secondary" onclick="closeModal('modal-portfolio')">Cancelar</button>
+      <button onclick="savePortfolio()">Guardar</button>
+    </div>
+  </div>
+</div>
+<div class="modal-overlay" id="modal-investment">
+  <div class="modal">
+    <h2 id="investment-modal-title">Nueva Inversión</h2>
+    <input type="hidden" id="investment-id">
+    <label>Nombre / Activo</label>
+    <input type="text" id="investment-name" placeholder="Ej: Bitcoin">
+    <label>Categoría</label>
+    <select id="investment-category">
+      <option value="Acciones">Acciones</option>
+      <option value="Cripto">Cripto</option>
+      <option value="Bonos">Bonos</option>
+      <option value="Fondos">Fondos</option>
+      <option value="Bienes Raíces">Bienes Raíces</option>
+      <option value="Otros">Otros</option>
+    </select>
+    <div class="row">
+      <div><label>Saldo Inicial</label><input type="number" id="investment-initial" placeholder="0" step="0.01"></div>
+      <div><label>Saldo Acumulado</label><input type="number" id="investment-added" placeholder="0" step="0.01"></div>
+    </div>
+    <div class="row">
+      <div><label>Rendimiento EA (%)</label><input type="number" id="investment-ea" placeholder="0" step="0.01"></div>
+      <div><label>Rendimiento Mensual (%)</label><input type="number" id="investment-monthly" placeholder="0" step="0.01"></div>
+    </div>
+    <label>Rendimiento Acumulado (%)</label>
+    <input type="number" id="investment-accum" placeholder="0" step="0.01">
+    <div class="modal-actions">
+      <button class="secondary" onclick="closeModal('modal-investment')">Cancelar</button>
+      <button onclick="saveInvestment()">Guardar</button>
+    </div>
+  </div>
+</div>
+<div class="modal-overlay" id="modal-purchase">
+  <div class="modal">
+    <h2 id="purchase-modal-title">Registrar Compra</h2>
+    <input type="hidden" id="purchase-id">
+    <label>Descripción</label>
+    <input type="text" id="purchase-desc" placeholder="Ej: Compra de acciones">
+    <div class="row">
+      <div><label>Valor</label><input type="number" id="purchase-amount" placeholder="0" step="0.01"></div>
+      <div>
+        <label>Tipo</label>
+        <select id="purchase-type">
+          <option value="expense">💸 Gasto</option>
+          <option value="income">💰 Ingreso</option>
+        </select>
+      </div>
+    </div>
+    <label>Categoría</label>
+    <select id="purchase-category">
+      <option value="Acciones">Acciones</option>
+      <option value="Cripto">Cripto</option>
+      <option value="Bonos">Bonos</option>
+      <option value="Fondos">Fondos</option>
+      <option value="Bienes Raíces">Bienes Raíces</option>
+      <option value="Dividendos">Dividendos</option>
+      <option value="Otros">Otros</option>
+    </select>
+    <label>Fecha</label>
+    <input type="date" id="purchase-date">
+    <div class="modal-actions">
+      <button class="secondary" onclick="closeModal('modal-purchase')">Cancelar</button>
+      <button onclick="savePurchase()">Guardar</button>
+    </div>
+  </div>
+</div>
+<script>
+const ICONS=['💼','🚀','💎','🏦','📈','🪙','🌐','⚡','🎯','🔥','🧠','🌟','💡','🏆','🦁','🐂','🐻','🌱','🏔️','🎨','💻','🔬','⚕️','🛢️'];
+let state={portfolios:[],currentPortfolioId:null,currentTab:'summary',calendarDate:new Date(),selectedDate:null,pendingIcon:ICONS[0]};
+function uid(){return 'id_'+Math.random().toString(36).slice(2,11)+Date.now().toString(36)}
+function formatMoney(v){v=Number(v)||0;return '$'+v.toLocaleString('es-CO',{minimumFractionDigits:2,maximumFractionDigits:2})}
+function escapeHtml(s){return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function randomColor(){const c=['#3b82f6','#8b5cf6','#ec4899','#f59e0b','#10b981','#06b6d4','#ef4444','#84cc16'];return c[Math.floor(Math.random()*c.length)]}
+function save(){try{localStorage.setItem('portfolioTracker',JSON.stringify({portfolios:state.portfolios}))}catch(e){}}
+function load(){const raw=localStorage.getItem('portfolioTracker');if(raw){try{state.portfolios=JSON.parse(raw).portfolios||[]}catch(e){state.portfolios=[]}}
+if(state.portfolios.length===0){state.portfolios.push({id:uid(),name:'Portafolio Demo',desc:'Ejemplo inicial',icon:'🚀',color:'#3b82f6',investments:[{id:uid(),name:'Bitcoin',category:'Cripto',initial:1000,added:500,ea:12.5,monthly:1.2,accum:15.3},{id:uid(),name:'Acciones Apple',category:'Acciones',initial:2000,added:300,ea:8.4,monthly:0.9,accum:9.7}],purchases:[{id:uid(),desc:'Compra BTC',amount:500,type:'expense',category:'Cripto',date:new Date().toISOString().slice(0,10)},{id:uid(),desc:'Dividendos',amount:120,type:'income',category:'Dividendos',date:new Date().toISOString().slice(0,10)}]});save()}}
+function closeModal(id){document.getElementById(id).classList.remove('show')}
+function showView(v){document.querySelectorAll('.view').forEach(x=>x.classList.add('hidden'));document.getElementById('view-'+v).classList.remove('hidden');document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));if(v==='portfolios')document.getElementById('nav-portfolios').classList.add('active');if(v==='dashboard'){document.getElementById('nav-dashboard').classList.add('active');renderDashboard()}if(v==='detail')renderDetail()}
+function switchTab(tab){state.currentTab=tab;document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active',t.dataset.tab===tab));document.querySelectorAll('.tab-view').forEach(v=>v.classList.add('hidden'));document.getElementById('tab-'+tab).classList.remove('hidden');if(tab==='summary')renderSummary();if(tab==='investments')renderInvestments();if(tab==='purchases')renderPurchases();if(tab==='calendar')renderCalendar()}
+function showGlobalCalendar(){if(!state.currentPortfolioId){if(state.portfolios.length===0){alert('Crea un portafolio primero');return}state.currentPortfolioId=state.portfolios[0].id}showView('detail');switchTab('calendar')}
+function renderPortfolios(){const list=document.getElementById('portfolios-list');if(state.portfolios.length===0){list.innerHTML='<div class="empty"><div class="big">📂</div><p>No hay portafolios aún</p><p style="margin-top:8px"><button onclick="openPortfolioModal()">+ Crear primer portafolio</button></p></div>';return}
+list.innerHTML=state.portfolios.map(p=>{const t=calcPortfolioTotals(p);return `<div class="portfolio-card" onclick="openPortfolio('${p.id}')"><div class="portfolio-icon" style="background:${p.color}">${p.icon}</div><div class="portfolio-info"><h3>${escapeHtml(p.name)}</h3><small>${escapeHtml(p.desc||'Sin descripción')}</small><div style="margin-top:6px;font-size:.75rem"><span class="badge ${t.total>=0?'green':'red'}">${formatMoney(t.total)}</span><span class="badge gray" style="margin-left:4px">${p.investments.length} inv.</span></div></div><span style="color:var(--muted);font-size:1.5rem">›</span></div>`}).join('')}
+function openPortfolioModal(id){state.pendingIcon=ICONS[0];document.getElementById('portfolio-modal-title').textContent=id?'Editar Portafolio':'Nuevo Portafolio';document.getElementById('portfolio-id').value=id||'';if(id){const p=state.portfolios.find(x=>x.id===id);document.getElementById('portfolio-name').value=p.name;document.getElementById('portfolio-desc').value=p.desc||'';state.pendingIcon=p.icon}else{document.getElementById('portfolio-name').value='';document.getElementById('portfolio-desc').value=''}renderIconGrid();document.getElementById('modal-portfolio').classList.add('show')}
+function renderIconGrid(){document.getElementById('icon-grid').innerHTML=ICONS.map(ic=>`<div class="icon-option ${ic===state.pendingIcon?'selected':''}" onclick="selectIcon('${ic}')">${ic}</div>`).join('')}
+function selectIcon(ic){state.pendingIcon=ic;renderIconGrid()}
+function savePortfolio(){const id=document.getElementById('portfolio-id').value;const name=document.getElementById('portfolio-name').value.trim();const desc=document.getElementById('portfolio-desc').value.trim();if(!name){alert('Ingresa un nombre');return}if(id){const p=state.portfolios.find(x=>x.id===id);p.name=name;p.desc=desc;p.icon=state.pendingIcon}else{state.portfolios.push({id:uid(),name,desc,icon:state.pendingIcon,color:randomColor(),investments:[],purchases:[]})}save();closeModal('modal-portfolio');renderPortfolios()}
+function openPortfolio(id){state.currentPortfolioId=id;showView('detail');switchTab('summary')}
+function getCurrent(){return state.portfolios.find(p=>p.id===state.currentPortfolioId)}
+function renderDetail(){const p=getCurrent();if(!p){showView('portfolios');return}document.getElementById('detail-icon').textContent=p.icon;document.getElementById('detail-icon').style.background=p.color;document.getElementById('detail-name').textContent=p.name;document.getElementById('detail-desc').textContent=p.desc||''}
+function calcPortfolioTotals(p){let initial=0,added=0;p.investments.forEach(inv=>{initial+=Number(inv.initial)||0;added+=Number(inv.added)||0});return{initial,added,total:initial+added}}
+function renderSummary(){const p=getCurrent();const t=calcPortfolioTotals(p);let eaW=0,mW=0,acW=0,base=0;p.investments.forEach(inv=>{const val=(Number(inv.initial)||0)+(Number(inv.added)||0);eaW+=(Number(inv.ea)||0)*val;mW+=(Number(inv.monthly)||0)*val;acW+=(Number(inv.accum)||0)*val;base+=val});const ea=base?eaW/base:0,m=base?mW/base:0,ac=base?acW/base:0;const metrics=[{label:'Saldo Inicial',value:formatMoney(t.initial),cls:''},{label:'Saldo Acumulado',value:formatMoney(t.added),cls:''},{label:'Total Invertido',value:formatMoney(t.total),cls:'yellow'},{label:'Rendimiento EA',value:ea.toFixed(2)+'%',cls:ea>=0?'green':'red'},{label:'Rendimiento Mensual',value:m.toFixed(2)+'%',cls:m>=0?'green':'red'},{label:'Rendimiento Acumulado',value:ac.toFixed(2)+'%',cls:ac>=0?'green':'red'}];document.getElementById('summary-metrics').innerHTML=metrics.map(x=>`<div class="metric ${x.cls==='green'?'green':x.cls==='red'?'red':x.cls==='yellow'?'yellow':''}"><small>${x.label}</small><div class="value ${x.cls}">${x.value}</div></div>`).join('');const cats={};p.investments.forEach(inv=>{const c=inv.category||'Sin categoría';cats[c]=(cats[c]||0)+(Number(inv.initial)||0)+(Number(inv.added)||0)});const entries=Object.entries(cats).sort((a,b)=>b[1]-a[1]);renderPieChart('category-breakdown',entries)}
+function renderInvestments(){const p=getCurrent();const list=document.getElementById('investments-list');if(p.investments.length===0){list.innerHTML='<div class="empty"><div class="big">💰</div><p>No hay inversiones</p><p style="margin-top:8px"><button onclick="openInvestmentModal()">+ Añadir inversión</button></p></div>';return}list.innerHTML=`<div style="overflow-x:auto"><table><thead><tr><th>Activo</th><th class="num">Inicial</th><th class="num">Acum.</th><th class="num">EA</th><th class="num">Mes</th><th class="num">Acum.</th><th></th></tr></thead><tbody>${p.investments.map(inv=>`<tr><td><strong>${escapeHtml(inv.name)}</strong><br><small class="text-muted">${escapeHtml(inv.category||'')}</small></td><td class="num">${formatMoney(inv.initial)}</td><td class="num">${formatMoney(inv.added)}</td><td class="num ${inv.ea>=0?'text-green':'text-red'}">${Number(inv.ea).toFixed(2)}%</td><td class="num ${inv.monthly>=0?'text-green':'text-red'}">${Number(inv.monthly).toFixed(2)}%</td><td class="num ${inv.accum>=0?'text-green':'text-red'}">${Number(inv.accum).toFixed(2)}%</td><td class="num" style="white-space:nowrap"><button class="secondary small" onclick="openInvestmentModal('${inv.id}')">✏️</button> <button class="danger small" onclick="deleteInvestment('${inv.id}')">🗑️</button></td></tr>`).join('')}</tbody></table></div>`}
+function openInvestmentModal(id){const p=getCurrent();document.getElementById('investment-modal-title').textContent=id?'Editar Inversión':'Nueva Inversión';document.getElementById('investment-id').value=id||'';if(id){const inv=p.investments.find(i=>i.id===id);document.getElementById('investment-name').value=inv.name;document.getElementById('investment-category').value=inv.category||'Otros';document.getElementById('investment-initial').value=inv.initial;document.getElementById('investment-added').value=inv.added;document.getElementById('investment-ea').value=inv.ea;document.getElementById('investment-monthly').value=inv.monthly;document.getElementById('investment-accum').value=inv.accum}else{['investment-name','investment-initial','investment-added','investment-ea','investment-monthly','investment-accum'].forEach(i=>document.getElementById(i).value='');document.getElementById('investment-category').value='Acciones'}document.getElementById('modal-investment').classList.add('show')}
+function saveInvestment(){const p=getCurrent();const id=document.getElementById('investment-id').value;const data={name:document.getElementById('investment-name').value.trim(),category:document.getElementById('investment-category').value,initial:Number(document.getElementById('investment-initial').value)||0,added:Number(document.getElementById('investment-added').value)||0,ea:Number(document.getElementById('investment-ea').value)||0,monthly:Number(document.getElementById('investment-monthly').value)||0,accum:Number(document.getElementById('investment-accum').value)||0};if(!data.name){alert('Ingresa un nombre');return}if(id){Object.assign(p.investments.find(i=>i.id===id),data)}else{p.investments.push({id:uid(),...data})}save();closeModal('modal-investment');renderInvestments()}
+function deleteInvestment(id){if(!confirm('¿Eliminar inversión?'))return;const p=getCurrent();p.investments=p.investments.filter(i=>i.id!==id);save();renderInvestments()}
+function renderPurchases(){const p=getCurrent();const list=document.getElementById('purchases-list');const sorted=[...p.purchases].sort((a,b)=>(b.date||'').localeCompare(a.date||''));if(sorted.length===0){list.innerHTML='<div class="empty"><div class="big">🛒</div><p>No hay registros</p><p style="margin-top:8px"><button onclick="openPurchaseModal()">+ Registrar compra</button></p></div>'}else{list.innerHTML=`<div style="overflow-x:auto"><table><thead><tr><th>Fecha</th><th>Descripción</th><th>Categoría</th><th class="num">Valor</th><th></th></tr></thead><tbody>${sorted.map(pu=>`<tr><td>${pu.date||''}</td><td>${escapeHtml(pu.desc)}</td><td><span class="badge gray">${escapeHtml(pu.category||'')}</span></td><td class="num ${pu.type==='income'?'text-green':'text-red'}">${pu.type==='income'?'+':'-'}${formatMoney(pu.amount)}</td><td class="num" style="white-space:nowrap"><button class="secondary small" onclick="openPurchaseModal('${pu.id}')">✏️</button> <button class="danger small" onclick="deletePurchase('${pu.id}')">🗑️</button></td></tr>`).join('')}</tbody></table></div>`}const months={};p.purchases.forEach(pu=>{const k=(pu.date||'').slice(0,7);if(!k)return;if(!months[k])months[k]={income:0,expense:0};if(pu.type==='income')months[k].income+=Number(pu.amount)||0;else months[k].expense+=Number(pu.amount)||0});const entries=Object.entries(months).sort((a,b)=>b[0].localeCompare(a[0]));if(entries.length===0){document.getElementById('monthly-summary').innerHTML='<p class="text-muted">Sin datos</p>'}else{document.getElementById('monthly-summary').innerHTML=`<table><thead><tr><th>Mes</th><th class="num">Ingresos</th><th class="num">Gastos</th><th class="num">Neto</th></tr></thead><tbody>${entries.map(([k,v])=>{const neto=v.income-v.expense;return `<tr><td>${k}</td><td class="num text-green">${formatMoney(v.income)}</td><td class="num text-red">${formatMoney(v.expense)}</td><td class="num ${neto>=0?'text-green':'text-red'}">${formatMoney(neto)}</td></tr>`}).join('')}</tbody></table>`}}
+function openPurchaseModal(id){const p=getCurrent();document.getElementById('purchase-modal-title').textContent=id?'Editar Compra':'Registrar Compra';document.getElementById('purchase-id').value=id||'';if(id){const pu=p.purchases.find(x=>x.id===id);document.getElementById('purchase-desc').value=pu.desc;document.getElementById('purchase-amount').value=pu.amount;document.getElementById('purchase-type').value=pu.type;document.getElementById('purchase-category').value=pu.category||'Otros';document.getElementById('purchase-date').value=pu.date||new Date().toISOString().slice(0,10)}else{document.getElementById('purchase-desc').value='';document.getElementById('purchase-amount').value='';document.getElementById('purchase-type').value='expense';document.getElementById('purchase-category').value='Acciones';document.getElementById('purchase-date').value=new Date().toISOString().slice(0,10)}document.getElementById('modal-purchase').classList.add('show')}
+function savePurchase(){const p=getCurrent();const id=document.getElementById('purchase-id').value;const data={desc:document.getElementById('purchase-desc').value.trim(),amount:Number(document.getElementById('purchase-amount').value)||0,type:document.getElementById('purchase-type').value,category:document.getElementById('purchase-category').value,date:document.getElementById('purchase-date').value};if(!data.desc){alert('Ingresa una descripción');return}if(!data.amount){alert('Ingresa un valor');return}if(id){Object.assign(p.purchases.find(x=>x.id===id),data)}else{p.purchases.push({id:uid(),...data})}save();closeModal('modal-purchase');renderPurchases()}
+function deletePurchase(id){if(!confirm('¿Eliminar registro?'))return;const p=getCurrent();p.purchases=p.purchases.filter(x=>x.id!==id);save();renderPurchases()}
+function changeMonth(d){state.calendarDate=new Date(state.calendarDate.getFullYear(),state.calendarDate.getMonth()+d,1);renderCalendar()}
+function renderCalendar(){const p=getCurrent();const d=state.calendarDate;const year=d.getFullYear(),month=d.getMonth();const monthNames=['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];document.getElementById('calendar-title').textContent=`${monthNames[month]} ${year}`;const dayNames=['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];const firstDay=new Date(year,month,1).getDay();const daysInMonth=new Date(year,month+1,0).getDate();const daysInPrev=new Date(year,month,0).getDate();const today=new Date();const todayStr=`${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}-${String(today.getDate()).padStart(2,'0')}`;const byDay={};p.purchases.forEach(pu=>{if(!pu.date)return;const k=pu.date;if(!byDay[k])byDay[k]={income:0,expense:0};if(pu.type==='income')byDay[k].income+=Number(pu.amount)||0;else byDay[k].expense+=Number(pu.amount)||0});let html=dayNames.map(n=>`<div class="cal-day-name">${n}</div>`).join('');for(let i=firstDay-1;i>=0;i--){html+=`<div class="cal-day other-month"><span class="day-num">${daysInPrev-i}</span></div>`}for(let day=1;day<=daysInMonth;day++){const dateStr=`${year}-${String(month+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;const data=byDay[dateStr]||{income:0,expense:0};let cls='cal-day';if(dateStr===todayStr)cls+=' today';if(data.income>0&&data.expense>0)cls+=' has-both';else if(data.income>0)cls+=' has-income';else if(data.expense>0)cls+=' has-expense';let amt='';if(data.income>0||data.expense>0){amt='<div class="amounts">';if(data.income>0)amt+=`<div class="inc">+${formatShort(data.income)}</div>`;if(data.expense>0)amt+=`<div class="exp">-${formatShort(data.expense)}</div>`;amt+='</div>'}html+=`<div class="${cls}" onclick="selectDay('${dateStr}')"><span class="day-num">${day}</span>${amt}</div>`}const remaining=(7-((firstDay+daysInMonth)%7))%7;for(let i=1;i<=remaining;i++){html+=`<div class="cal-day other-month"><span class="day-num">${i}</span></div>`}document.getElementById('calendar-grid').innerHTML=html;renderDayDetail()}
+const PIE_COLORS=['#3b82f6','#8b5cf6','#ec4899','#f59e0b','#10b981','#06b6d4','#ef4444','#84cc16','#14b8a6','#f97316'];
+function renderPieChart(elId,entries){const el=document.getElementById(elId);if(!el)return;const total=entries.reduce((s,[,v])=>s+v,0);if(entries.length===0||total<=0){el.innerHTML='<p class="text-muted">Sin datos</p>';return}const size=160,radius=56,stroke=26,circumference=2*Math.PI*radius,center=size/2;let offset=0,circles='';entries.forEach(([,v],i)=>{const pct=v/total;const dash=pct*circumference;circles+=`<circle cx="${center}" cy="${center}" r="${radius}" fill="none" stroke="${PIE_COLORS[i%PIE_COLORS.length]}" stroke-width="${stroke}" stroke-dasharray="${dash} ${circumference-dash}" stroke-dashoffset="${-offset}" transform="rotate(-90 ${center} ${center})"/>`;offset+=dash});const legend=entries.map(([k,v],i)=>`<div style="display:flex;align-items:center;gap:6px;font-size:.8rem;margin-bottom:6px"><span style="width:10px;height:10px;border-radius:50%;background:${PIE_COLORS[i%PIE_COLORS.length]};display:inline-block;flex-shrink:0"></span><span style="flex:1">${escapeHtml(k)}</span><span class="text-muted">${formatMoney(v)} (${(v/total*100).toFixed(1)}%)</span></div>`).join('');el.innerHTML=`<div style="display:flex;gap:16px;flex-wrap:wrap;align-items:center;justify-content:center"><svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}">${circles}</svg><div style="flex:1;min-width:150px">${legend}</div></div>`}
+function formatShort(v){v=Number(v)||0;if(v>=1000000)return (v/1000000).toFixed(1)+'M';if(v>=1000)return (v/1000).toFixed(1)+'k';return v.toFixed(0)}
+function selectDay(dateStr){state.selectedDate=dateStr;renderDayDetail()}
+function renderDayDetail(){const p=getCurrent();const dateStr=state.selectedDate;const label=document.getElementById('selected-day-label');const detail=document.getElementById('day-detail');if(!dateStr){label.textContent='';detail.innerHTML='<p class="text-muted">Selecciona un día del calendario</p>';return}label.textContent=dateStr;const items=p.purchases.filter(pu=>pu.date===dateStr);if(items.length===0){detail.innerHTML='<p class="text-muted">Sin movimientos este día</p>';return}detail.innerHTML=`<table><thead><tr><th>Tipo</th><th>Descripción</th><th>Categoría</th><th class="num">Valor</th></tr></thead><tbody>${items.map(pu=>`<tr><td><span class="badge ${pu.type==='income'?'green':'red'}">${pu.type==='income'?'Ingreso':'Gasto'}</span></td><td>${escapeHtml(pu.desc)}</td><td>${escapeHtml(pu.category||'')}</td><td class="num ${pu.type==='income'?'text-green':'text-red'}">${pu.type==='income'?'+':'-'}${formatMoney(pu.amount)}</td></tr>`).join('')}</tbody></table>`}
+function renderDashboard(){let totalInitial=0,totalAdded=0,totalIncome=0,totalExpense=0;const invCats={},expCats={},months={};state.portfolios.forEach(p=>{p.investments.forEach(inv=>{totalInitial+=Number(inv.initial)||0;totalAdded+=Number(inv.added)||0;const c=inv.category||'Sin categoría';invCats[c]=(invCats[c]||0)+(Number(inv.initial)||0)+(Number(inv.added)||0)});p.purchases.forEach(pu=>{const amt=Number(pu.amount)||0;const k=(pu.date||'').slice(0,7);if(pu.type==='income'){totalIncome+=amt}else{totalExpense+=amt;const c=pu.category||'Otros';expCats[c]=(expCats[c]||0)+amt}if(k){if(!months[k])months[k]={income:0,expense:0};if(pu.type==='income')months[k].income+=amt;else months[k].expense+=amt}})});const totalInvested=totalInitial+totalAdded;const net=totalIncome-totalExpense;const metrics=[{label:'Total Invertido',value:formatMoney(totalInvested),cls:'yellow'},{label:'Ingresos Totales',value:formatMoney(totalIncome),cls:'green'},{label:'Gastos Totales',value:formatMoney(totalExpense),cls:'red'},{label:'Flujo Neto',value:formatMoney(net),cls:net>=0?'green':'red'},{label:'Portafolios',value:String(state.portfolios.length),cls:''}];document.getElementById('dashboard-metrics').innerHTML=metrics.map(x=>`<div class="metric ${x.cls}"><small>${x.label}</small><div class="value ${x.cls}">${x.value}</div></div>`).join('');const invEntries=Object.entries(invCats).sort((a,b)=>b[1]-a[1]);renderPieChart('dashboard-investments-pie',invEntries);const expEntries=Object.entries(expCats).sort((a,b)=>b[1]-a[1]);renderPieChart('dashboard-expenses-pie',expEntries);const monthEntries=Object.entries(months).sort((a,b)=>b[0].localeCompare(a[0]));if(monthEntries.length===0){document.getElementById('dashboard-monthly').innerHTML='<p class="text-muted">Sin datos</p>'}else{document.getElementById('dashboard-monthly').innerHTML=`<table><thead><tr><th>Mes</th><th class="num">Ingresos</th><th class="num">Gastos</th><th class="num">Neto</th></tr></thead><tbody>${monthEntries.map(([k,v])=>{const neto=v.income-v.expense;return `<tr><td>${k}</td><td class="num text-green">${formatMoney(v.income)}</td><td class="num text-red">${formatMoney(v.expense)}</td><td class="num ${neto>=0?'text-green':'text-red'}">${formatMoney(neto)}</td></tr>`}).join('')}</tbody></table>`}}
+document.querySelectorAll('.modal-overlay').forEach(m=>{m.addEventListener('click',e=>{if(e.target===m)m.classList.remove('show')})});
+load();renderPortfolios();
+</script>
+</body>
+</html>
