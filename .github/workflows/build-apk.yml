@@ -29,6 +29,11 @@ jobs:
       - name: Install Cordova CLI
         run: npm install -g cordova
 
+      - name: Install stable debug keystore (keeps app data across updates)
+        run: |
+          mkdir -p ~/.android
+          cp debug.keystore ~/.android/debug.keystore
+
       - name: Clean stale platform files
         run: rm -rf platforms plugins
 
