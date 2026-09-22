@@ -34,6 +34,15 @@ jobs:
           mkdir -p ~/.android
           cp debug.keystore ~/.android/debug.keystore
 
+      - name: Bump app version (lets Android update in place instead of requiring uninstall)
+        run: |
+          # Usa el nÃºmero de ejecuciÃ³n de Actions como parche de versiÃ³n: siempre sube,
+          # nunca se repite, asÃ­ Android nunca ve un "downgrade" y no exige desinstalar.
+          NEW_VERSION="1.0.${{ github.run_number }}"
+          sed -i "s/version=\"1\.0\.[0-9]*\"/version=\"$NEW_VERSION\"/" config.xml
+          echo "Nueva versiÃ³n: $NEW_VERSION"
+          grep 'version=' config.xml | head -1
+
       - name: Clean stale platform files
         run: rm -rf platforms plugins
 
