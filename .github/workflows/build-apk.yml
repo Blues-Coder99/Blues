@@ -36,14 +36,18 @@ jobs:
           mkdir -p ~/.android
           cp debug.keystore ~/.android/debug.keystore
 
-      - name: Bump app version (lets Android update in place instead of requiring uninstall)
+      - name: Set app version (2.1.x) and versionCode
         run: |
-          # Usa el número de ejecución de Actions como parche de versión: siempre sube,
-          # nunca se repite, así Android nunca ve un "downgrade" y no exige desinstalar.
-          NEW_VERSION="1.0.${{ github.run_number }}"
-          sed -i "s/version=\"1\.0\.[0-9]*\"/version=\"$NEW_VERSION\"/" config.xml
-          echo "Nueva versión: $NEW_VERSION"
-          grep 'version=' config.xml | head -1
+          # versionName = 2.1.<n> y versionCode = 21000 + <n>, con n = número de ejecución.
+          # Siempre sube, nunca se repite: Android actualiza sobre la app instalada
+          # (misma firma + mismo id) y conserva tus datos, sin pedir desinstalar.
+          RUN=${{ github.run_number }}
+          NEW_VERSION="2.1.$RUN"
+          NEW_CODE=$((21000 + RUN))
+          sed -i -E "s/ version=\"[0-9.]+\"/ version=\"$NEW_VERSION\"/" config.xml
+          sed -i -E "s/android-versionCode=\"[0-9]+\"/android-versionCode=\"$NEW_CODE\"/" config.xml
+          echo "Nueva versión: $NEW_VERSION (code $NEW_CODE)"
+          grep '<widget' config.xml
 
       - name: Clean stale platform files
         run: rm -rf platforms plugins
