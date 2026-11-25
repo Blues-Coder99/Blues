@@ -36,14 +36,25 @@ jobs:
           mkdir -p ~/.android
           cp debug.keystore ~/.android/debug.keystore
 
-      - name: Set app version (2.1.x) and versionCode
+      - name: Write signing config (always the same key in debug.keystore)
         run: |
-          # versionName = 2.1.<n> y versionCode = 21000 + <n>, con n = número de ejecución.
-          # Siempre sube, nunca se repite: Android actualiza sobre la app instalada
-          # (misma firma + mismo id) y conserva tus datos, sin pedir desinstalar.
+          # Firma explícita con la llave del repo: todas las versiones quedan firmadas igual,
+          # así Android actualiza encima de la app instalada y conserva los datos.
+          cat > build.json <<EOF
+          {"android":{"debug":{"keystore":"$GITHUB_WORKSPACE/debug.keystore","storePassword":"android","alias":"androiddebugkey","password":"android","keystoreType":"pkcs12"}}}
+          EOF
+          cat build.json
+
+      - name: Set app version (2.2.x) and versionCode
+        run: |
+          # versionName = 2.2.<n> y versionCode = 22000 + <n>, con n = número de ejecución.
+          # Siempre sube (y siempre es mayor que las 2.1.x = 21000 + n), nunca se repite:
+          # Android actualiza sobre la app instalada (misma firma + mismo id) y conserva tus datos.
           RUN=${{ github.run_number }}
-          NEW_VERSION="2.1.$RUN"
-          NEW_CODE=$((21000 + RUN))
+          NEW_VERSION="2.2.$RUN"
+          NEW_CODE=$((22000 + RUN))
+          echo "APP_VERSION=$NEW_VERSION" >> "$GITHUB_ENV"
+          sed -i "s/__APP_VERSION__/$NEW_VERSION/g" www/index.html
           sed -i -E "s/ version=\"[0-9.]+\"/ version=\"$NEW_VERSION\"/" config.xml
           sed -i -E "s/android-versionCode=\"[0-9]+\"/android-versionCode=\"$NEW_CODE\"/" config.xml
           echo "Nueva versión: $NEW_VERSION (code $NEW_CODE)"
@@ -55,16 +66,32 @@ jobs:
       - name: Add Android platform
         run: cordova platform add android@15.1.0
 
+      - name: Add file plugin (backup file in Downloads)
+        run: cordova plugin add cordova-plugin-file@8
+
       - name: Build debug APK
-        run: cordova build android
+        run: cordova build android --debug --buildConfig=build.json
 
       - name: Locate generated APK files (debug helper)
         run: find platforms -iname "*.apk" -o -iname "*.aab" 2>/dev/null || true
 
+      - name: Verify APK signature (must match debug.keystore, or the update would wipe data)
+        run: |
+          APK=$(find platforms/android -iname "*.apk" | head -1)
+          APKSIGNER=$(ls "$ANDROID_HOME"/build-tools/*/apksigner 2>/dev/null | sort -V | tail -1)
+          if [ -z "$APKSIGNER" ]; then echo "::warning::apksigner no disponible, no se pudo verificar la firma"; exit 0; fi
+          "$APKSIGNER" verify --print-certs "$APK" | tee cert.txt
+          if grep -qi "b99b9d9d60dc4204cbcd9cccd4c1fa76a0aff7deb20c04ce6f547105f6f9dd90" cert.txt; then
+            echo "Firma correcta: mismo certificado de siempre"
+          else
+            echo "::error::El APK quedó firmado con otra llave. Instalarlo obligaría a desinstalar y perder datos."
+            exit 1
+          fi
+
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
-          name: blues-apk
+          name: blues-apk-${{ env.APP_VERSION }}
           path: |
             platforms/android/**/*.apk
             platforms/android/**/*.aab

@@ -33,6 +33,12 @@ El .zip que generé tiene toda esta estructura de carpetas ya lista. Si prefiere
 3. Usa **Add file → Upload files** y selecciona los archivos ya extraídos. Ojo: la app oficial de GitHub y el navegador móvil no siempre preservan subcarpetas ocultas como `.github/workflows` al arrastrar un .zip completo sin extraer — por eso se recomienda extraerlo primero, o usar la Opción 1 si falla.
 4. El resto es igual: revisa la pestaña Actions y descarga el APK cuando termine.
 
+## Actualizar sin perder datos
+- Todas las versiones se firman con `debug.keystore` (no lo borres ni lo cambies) y el versionCode siempre sube (2.2.x = 22000 + número de ejecución). Así Android instala **encima** de la app y conserva los datos.
+- El workflow verifica la firma del APK y falla si no coincide, para no instalar nunca un APK que obligue a desinstalar.
+- Si Android aun así pide desinstalar (pasa una sola vez si la app instalada se firmó con otra llave): antes de desinstalar ve a Ajustes → **Copiar respaldo**, guarda el texto, instala la nueva versión y usa **Restaurar**.
+- La versión instalada se ve al final de Ajustes.
+
 ## Notas
 - Los datos (portafolios, inversiones, gastos/ingresos) se guardan con `localStorage` dentro del propio APK — persisten entre aperturas de la app mientras no borres los datos de la aplicación desde Ajustes de Android.
 - El primer build puede tardar más porque descarga el SDK de Android; builds siguientes son más rápidos.
